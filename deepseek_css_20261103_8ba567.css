@@ -1,0 +1,246 @@
+:root {
+  --bg: #F4F6F9;
+  --surface: #FFFFFF;
+  --ink: #1A202C;
+  --muted: #718096;
+  --brand: #6B46C1; /* Morado AlquimiaEdu */
+  --brand-light: #E9D8FD;
+  --accent: #F6AD55;
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 800px;
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #EDF2F7;
+}
+
+.brand {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--ink);
+}
+
+.brand span { color: var(--brand); }
+
+.tag {
+  background: var(--brand-light);
+  color: var(--brand);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+main {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cover-art {
+  background: var(--ink);
+  border-radius: 16px;
+  padding: 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 250px;
+  overflow: hidden;
+}
+
+.cover-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(107, 70, 193, 0.4), transparent 70%);
+}
+
+.ep-badge {
+  font-size: 60px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.1);
+  line-height: 1;
+  z-index: 1;
+}
+
+.sector-badge {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 18px;
+  z-index: 1;
+}
+
+.waveform {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 60px;
+  z-index: 1;
+}
+
+.waveform .bar {
+  width: 6px;
+  background: var(--brand);
+  border-radius: 3px;
+  animation: bounce 1.2s ease-in-out infinite alternate;
+}
+
+.waveform .bar:nth-child(1) { height: 20%; animation-delay: 0.1s; }
+.waveform .bar:nth-child(2) { height: 50%; animation-delay: 0.2s; }
+.waveform .bar:nth-child(3) { height: 80%; animation-delay: 0.3s; }
+.waveform .bar:nth-child(4) { height: 40%; animation-delay: 0.4s; }
+.waveform .bar:nth-child(5) { height: 90%; animation-delay: 0.5s; }
+.waveform .bar:nth-child(6) { height: 60%; animation-delay: 0.6s; }
+.waveform .bar:nth-child(7) { height: 30%; animation-delay: 0.7s; }
+.waveform .bar:nth-child(8) { height: 70%; animation-delay: 0.8s; }
+.waveform .bar:nth-child(9) { height: 45%; animation-delay: 0.9s; }
+.waveform .bar:nth-child(10) { height: 25%; animation-delay: 1.0s; }
+
+@keyframes bounce {
+  from { transform: scaleY(0.5); opacity: 0.7; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+.info h1 {
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.info h2 {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.info p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.player {
+  background: #F8FAFC;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #EDF2F7;
+}
+
+.captions {
+  min-height: 80px;
+  margin-bottom: 20px;
+}
+
+.captions span {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--brand);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.captions p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  background: #E2E8F0;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--brand);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.controls button:hover {
+  transform: scale(1.1);
+}
+
+.controls button.play {
+  width: 64px;
+  height: 64px;
+  background: var(--brand);
+  color: white;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  box-shadow: 0 8px 20px -6px rgba(107, 70, 193, 0.6);
+}
+
+.controls button.play:hover {
+  transform: scale(1.05);
+  background: #5A3D9C;
+}

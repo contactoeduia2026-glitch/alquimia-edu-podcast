@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlquimiaEdu · Operaciones que Sostienen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="brand">Alquimia<span>Edu</span></div>
+      <div class="tag">Podcast</div>
+    </header>
+
+    <main>
+      <div class="cover-art">
+        <div class="waveform">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <div class="ep-badge">Episodio 01</div>
+        <div class="sector-badge" id="epSector">Banca y Seguros</div>
+      </div>
+
+      <div class="info">
+        <h1 id="showTitle"></h1>
+        <h2 id="epTitle"></h2>
+        <p id="epDesc"></p>
+      </div>
+
+      <div class="player">
+        <div class="captions">
+          <span id="captionWho"></span>
+          <p id="captionTxt"></p>
+        </div>
+        
+        <div class="progress-wrap">
+          <span id="timeCurrent">0:00</span>
+          <input type="range" id="progressBar" min="0" max="100" value="0">
+          <span id="timeTotal">0:00</span>
+        </div>
+
+        <div class="controls">
+          <button id="prevBtn" aria-label="Anterior">⏮</button>
+          <button id="playBtn" class="play" aria-label="Reproducir">▶</button>
+          <button id="nextBtn" aria-label="Siguiente">⏭</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="podcast-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+name: Generar voz del podcast
+on:
+  push:
+    branches: [main]
+    paths: ["podcast-data.js", "tools/**", ".github/workflows/generar-voz.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: generar-voz
+  cancel-in-progress: false
+jobs:
+  voz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Revisar si falta audio
+        id: check
+        run: |
+          node tools/make-manifest.js | tee resumen.txt
+          if grep -q "faltan 0" resumen.txt; then echo "pendiente=no" >> $GITHUB_OUTPUT; else echo "pendiente=si" >> $GITHUB_OUTPUT; fi
+      - uses: actions/setup-python@v5
+        if: steps.check.outputs.pendiente == 'si' || github.event_name == 'workflow_dispatch'
+        with:
+          python-version: "3.12"
+      - if: steps.check.outputs.pendiente == 'si' || github.event_name == 'workflow_dispatch'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg && pip install "google-genai>=2.25.0"
+      - if: steps.check.outputs.pendiente == 'si' || github.event_name == 'workflow_dispatch'
+        run: python tools/generate-audio-gemini.py
+        env:
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEY }}
+          VOZ_ANA: ${{ vars.VOZ_VALENTINA }}
+          VOZ_CARLOS: ${{ vars.VOZ_MATEO }}
+          PAUSA_SEG: ${{ vars.PAUSA_SEG }}
+      - name: Guardar los audios en el repositorio
+        if: always()
+        run: |
+          rm -f resumen.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add -A audio
+          git diff --cached --quiet && exit 0
+          git commit -m "Voz del podcast actualizada"
+          git pull --rebase origin main
+          git push
+      - name: Publicar en Vercel
+        if: always()
+        run: |
+          [ -n "$HOOK" ] && curl -s -X POST "$HOOK" || echo "Sin deploy hook configurado"
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
