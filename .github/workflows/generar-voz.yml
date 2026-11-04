@@ -1,0 +1,76 @@
+# Genera la voz del podcast con Gemini cada vez que cambia el guion.
+# Al lanzarlo a mano (Run workflow) también revisa los audios ya hechos y regenera los vacíos o cortados.
+# Además corre una vez al día hasta completar todas las frases (útil con la cuota gratuita).
+# Los estudiantes nunca llaman a Gemini: solo descargan los mp3 ya generados.
+name: Generar voz del podcast
+on:
+  push:
+    branches: [main]
+    paths: ["podcast-banca-seguros/content.js", "podcast-banca-seguros/tools/**", ".github/workflows/generar-voz.yml"]
+  schedule:
+    - cron: "30 9 * * *"   # 4:30 a. m. hora Colombia, después de que se renueva la cuota diaria
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: generar-voz
+  cancel-in-progress: false
+jobs:
+  voz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: podcast-banca-seguros
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Revisar si falta audio
+        id: check
+        run: |
+          node tools/make-manifest.js | tee resumen.txt
+          if grep -q "faltan 0" resumen.txt; then echo "pendiente=no" >> $GITHUB_OUTPUT; else echo "pendiente=si" >> $GITHUB_OUTPUT; fi
+      - uses: actions/setup-python@v5
+        if: steps.check.outputs.pendiente == 'si' || github.event_name == 'workflow_dispatch'
+        with:
+          python-version: "3.12"
+      - if: steps.check.outputs.pendiente == 'si' || github.event_name == 'workflow_dispatch'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg && pip install "google-genai>=2.25.0"
+      - if: steps.check.outputs.pendiente == 'si' || github.event_name == 'workflow_dispatch'
+        run: python tools/generate-audio-gemini.py
+        env:
+          # Proyectos de Gemini en orden de uso; los secretos que no existan llegan vacíos y se ignoran
+          GEMINI_API_KEYS: |
+            ${{ secrets.GEMINI_API_KEY }}
+            ${{ secrets.GEMINI_API_KEY2 }}
+            ${{ secrets.GEMINI_API_KEY3 }}
+            ${{ secrets.GEMINI_API_KEY4 }}
+            ${{ secrets.GEMINI_API_KEY5 }}
+            ${{ secrets.GEMINI_API_KEY6 }}
+            ${{ secrets.GEMINI_API_KEY7 }}
+            ${{ secrets.GEMINI_API_KEY8 }}
+            ${{ secrets.GEMINI_API_KEY9 }}
+            ${{ secrets.GEMINI_API_KEY10 }}
+          VOZ_CAMILA: ${{ vars.VOZ_CAMILA }}
+          VOZ_ANDRES: ${{ vars.VOZ_ANDRES }}
+          VOZ_MARCELA: ${{ vars.VOZ_MARCELA }}
+          PAUSA_SEG: ${{ vars.PAUSA_SEG }}
+      - name: Guardar los audios en el repositorio
+        if: always()
+        run: |
+          rm -f resumen.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add -A audio
+          git diff --cached --quiet && exit 0
+          git commit -m "Voz del curso actualizada"
+          git pull --rebase origin main
+          git push
+      - name: Publicar en Vercel
+        if: always()
+        run: |
+          [ -n "$HOOK" ] && curl -s -X POST "$HOOK" || echo "Sin deploy hook configurado"
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
