@@ -6,7 +6,7 @@ name: Generar voz del podcast
 on:
   push:
     branches: [main]
-    paths: ["podcast-banca-seguros/content.js", "podcast-banca-seguros/tools/**", ".github/workflows/generar-voz.yml"]
+    paths: ["podcast-agroindustria-inocuidad/content.js", "podcast-agroindustria-inocuidad/tools/**", ".github/workflows/generar-voz.yml"]
   schedule:
     - cron: "30 9 * * *"   # 4:30 a. m. hora Colombia, después de que se renueva la cuota diaria
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 180
     defaults:
       run:
-        working-directory: podcast-banca-seguros
+        working-directory: podcast-agroindustria-inocuidad
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
